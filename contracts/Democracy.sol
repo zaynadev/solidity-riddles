@@ -35,18 +35,12 @@ contract Democracy is Ownable, ERC721 {
     }
 
     modifier contractBalanceIsGreaterThanZero() {
-        require(
-            address(this).balance > 0,
-            "DemocracyNft: Insufficient contract balance"
-        );
+        require(address(this).balance > 0, "DemocracyNft: Insufficient contract balance");
         _;
     }
 
     modifier nomineeIsValid(address nominee) {
-        require(
-            nominee == incumbent || nominee == challenger,
-            "DemocracyNft: Must vote for incumbent or challenger"
-        );
+        require(nominee == incumbent || nominee == challenger, "DemocracyNft: Must vote for incumbent or challenger");
         _;
     }
 
@@ -56,10 +50,7 @@ contract Democracy is Ownable, ERC721 {
     }
 
     modifier callerIsNotAContract() {
-        require(
-            tx.origin == msg.sender,
-            "DemocracyNft: Feature available to EOAs only"
-        );
+        require(tx.origin == msg.sender, "DemocracyNft: Feature available to EOAs only");
         _;
     }
 
@@ -68,10 +59,7 @@ contract Democracy is Ownable, ERC721 {
     }
 
     function nominateChallenger(address challenger_) external {
-        require(
-            challenger == address(0),
-            "DemocracyNft: Challenger already nominated"
-        );
+        require(challenger == address(0), "DemocracyNft: Challenger already nominated");
 
         challenger = challenger_;
 
@@ -88,10 +76,7 @@ contract Democracy is Ownable, ERC721 {
     {
         // Check NFT balance
         uint256 hodlerNftBalance = balanceOf(msg.sender);
-        require(
-            hodlerNftBalance > 0,
-            "DemocracyNft: Voting only for NFT hodlers"
-        );
+        require(hodlerNftBalance > 0, "DemocracyNft: Voting only for NFT hodlers");
 
         // Log votes
         votes[nominee] += hodlerNftBalance;
@@ -106,50 +91,24 @@ contract Democracy is Ownable, ERC721 {
         }
     }
 
-    function mint(address to, uint256 tokenId)
-        external
-        payable
-        callerIsNotAContract
-        onlyOwner
-    {
-        require(
-            msg.value >= PRICE,
-            "DemocracyNft: Insufficient transaction value"
-        );
+    function mint(address to, uint256 tokenId) external payable callerIsNotAContract onlyOwner {
+        require(msg.value >= PRICE, "DemocracyNft: Insufficient transaction value");
 
         _mint(to, tokenId);
     }
 
-    function approve(address to, uint256 tokenId)
-        public
-        override
-        callerIsNotAContract
-    {
+    function approve(address to, uint256 tokenId) public override callerIsNotAContract {
         _approve(to, tokenId);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public override callerIsNotAContract {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner or approved"
-        );
+    function transferFrom(address from, address to, uint256 tokenId) public override callerIsNotAContract {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
 
         _transfer(from, to, tokenId);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public override callerIsNotAContract {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner or approved"
-        );
+    function safeTransferFrom(address from, address to, uint256 tokenId) public override callerIsNotAContract {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
 
         _safeTransfer(from, to, tokenId, "");
     }
